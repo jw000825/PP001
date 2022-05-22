@@ -1,129 +1,153 @@
-#include <GLFW/glfw3.h>
-#include <stdlib.h>
+#include <GLFW/glfw3.h> // 그래픽 라이브러리 프레임워크
 #include <stdio.h>
+#include <stdlib.h>
 #include <Windows.h>
+#include <iostream>
 
-#pragma comment(lib,"OpenGL32")
+#pragma comment(lib, "OpenGL32")
 
-BOOL AlphaBlend(
-    HDC hdcDest,
-    int xoriginDest,
-    int yoriginDest,
-    int wDest,
-    int hDest,
-    HDC hdcSrc,
-    int xoriginSrc,
-    int yoriginSrc,
-    int wSrc,
-    int hSrc,
-    BLENDFUNCTION ftn);
-
-static void error_callback(int error, const char* description)
-{
-    fputs(description, stderr);
+static void error_callback(int error, const char* description) {
+	fputs(description, stderr);
 }
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
+
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	}
 }
-int main(void)
-{
-    GLFWwindow* window;
-    float yPoint = 0.07;
-    float yPoint2 = 0.0;;
-    float xPoint = 0.8f;
-    float xPoint2 = 0.6f;
 
-    glfwSetErrorCallback(error_callback);
-    if (!glfwInit())
-        exit(EXIT_FAILURE);
-    window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-    glfwMakeContextCurrent(window); //gpu정리
-    glfwSetKeyCallback(window, key_callback);
+int main(void) {
+	GLFWwindow* window;
+	float bpX01 = 0.5f;			//box point X 01
+	float bpX02 = 0.0f;			//box point X 02
+	float bpY01 = -0.5f;		//box point Y 01
+	float bpY02 = 0.0f;			//box point Y 02
 
-    float ratio;
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height); //framebuffer = 화면에 담겨질 메모리 공간?
-    ratio = width / (float)height;
+	float mbpX01 = 0.8f;		//move box point X 01
+	float mbpX02 = 0.6f;		//move box point X 02
+	float mbpY01 = 0.15f;		//move box point Y 01
+	float mbpY02 = 0.0f;		//move box point Y 02
 
-    while (!glfwWindowShouldClose(window))
-    {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	glfwSetErrorCallback(error_callback);
 
-        glClearColor(1.0f, 0.0f, 0.0f, 1.0f); // 화면을 한가지 색으로 채운다(클리어하겠다)
-        glClear(GL_COLOR_BUFFER_BIT);
+	if (!glfwInit()) {
+		exit(EXIT_FAILURE);
+	}
 
-        if (GetAsyncKeyState(VK_SPACE) & 0x8000 || GetAsyncKeyState(VK_SPACE) & 0x8001)
-        {
-            yPoint = 0.27f;
-            yPoint2 = 0.20f;
-        }
-        else
-        {
-            yPoint = 0.07f;
-            yPoint2 = 0.0f;
-        }
+	window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
 
-        glPointSize(5);
-        glBegin(GL_TRIANGLES);
+	if (!window) {
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
 
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex2f(-0.07f, yPoint);
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex2f(-0.07f, yPoint2);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex2f(0.0f, yPoint2);
+	glfwMakeContextCurrent(window);		//Context를 장악, GPU 정리, Context = 클래스 묶음, s(스레드) = 동시에 여러개를 돌린다
+	glfwSetKeyCallback(window, key_callback);
 
-        glEnd();
+	float ratio;
+	int width, height;
 
-        glPointSize(5);
-        glBegin(GL_TRIANGLES);
+	glfwGetFramebufferSize(window, &width, &height);	//FrameBuffer = 화면에 담겨질 메모리 공간
 
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex2f(-0.07f, yPoint);
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex2f(0.0f, yPoint);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex2f(0.0f, yPoint2);
+	ratio = width / (float)height;
 
-        glEnd();
+	while (!glfwWindowShouldClose(window)) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-        glPointSize(5);
-        glBegin(GL_TRIANGLES);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);		//화면은 한가지 색으로 체운다(Clear)
+		glClear(GL_COLOR_BUFFER_BIT);
 
-        glColor3f(0.0f, 1.0f, 1.0f);
-        glVertex2f(xPoint2, 0.0f);
-        glColor3f(0.0f, 1.0f, 1.0f);
-        glVertex2f(xPoint, 0.0f);
-        glColor3f(0.0f, 0.0f, 0.0f);
-        glVertex2f(xPoint, 0.15f);
+		// LEFT
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000 || GetAsyncKeyState(VK_LEFT) & 0x8001) {
+			mbpX01 -= 0.02;
+			mbpX01 -= 0.02;
+		}
+		// RIGHT
+		if (GetAsyncKeyState(VK_RIGHT & 0x8000) || GetAsyncKeyState(VK_RIGHT) & 0x8001) {
+			mbpX01 += 0.02;
+			mbpX02 += 0.02;
+		}
+		// UP
+		if (GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(VK_UP) & 0x8001) {
+			mbpY01 += 0.02;
+			mbpY02 += 0.02;
+		}
+		// DOWN
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000 || GetAsyncKeyState(VK_DOWN) & 0x8001) {
+			mbpY01 -= 0.02;
+			mbpY02 -= 0.02;
+		}
 
-        glEnd();
+		glPointSize(10);
+		glBegin(GL_TRIANGLES);
 
-        
-
-        if (xPoint < -1.0f)
-            xPoint = 0.8f;
-        else
-            xPoint = xPoint - 0.003f;
-        if (xPoint2 < -1.2f)
-            xPoint2 = 0.6f;
-        else
-            xPoint2 = xPoint2 - 0.003f;
+		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);		//RGB + Alpha
+		glVertex2f(bpX01, bpY01);
+		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+		glVertex2f(bpX01, bpY02);
+		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+		glVertex2f(bpX02, bpY02);
+		glEnd();
 
 
+		glPointSize(10);
+		glBegin(GL_TRIANGLES);
 
-        glfwSwapBuffers(window);
-        glfwPollEvents(); // 이벤트를 계속 체크
-    }
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    exit(EXIT_SUCCESS);
+		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);		
+		glVertex2f(bpX01, bpY01);
+		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+		glVertex2f(bpX02, bpY01);
+		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+		glVertex2f(bpX02, bpY02);
+		glEnd();
+		
+
+		glPointSize(5);
+		glBegin(GL_TRIANGLES);
+		
+		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);		
+		glVertex2f(mbpX02, mbpY02);
+		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		glVertex2f(mbpX01, mbpY02);
+		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		glVertex2f(mbpX01, mbpY01);
+		glEnd();
+
+		
+		glPointSize(5);
+		glBegin(GL_TRIANGLES);
+
+		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		glVertex2f(mbpX02, mbpY01);
+		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		glVertex2f(mbpX01, mbpY01);
+		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		glVertex2f(mbpX02, mbpY02);
+		glEnd();
+
+
+		glfwSwapBuffers(window); 
+		glfwPollEvents();
+
+		if (mbpX02 < bpX02 && mbpX02 > bpX01 && mbpY02 > bpY02 && mbpY02 < bpY01) {
+			std::cout << "touch!";
+		}
+	}
+	glfwDestroyWindow(window);
+	glfwTerminate();
+	exit(EXIT_SUCCESS);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
