@@ -16,6 +16,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 }
 
+//10분 이상 지각이면 결석임???
+
 int main(void) {
 	GLFWwindow* window;
 	float bpX01 = 0.5f;			//box point X 01
@@ -34,7 +36,7 @@ int main(void) {
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
+	window = glfwCreateWindow(700, 700, "Simple example", NULL, NULL);
 
 	if (!window) {
 		glfwTerminate();
@@ -64,17 +66,17 @@ int main(void) {
 			mbpX01 -= 0.02;
 		}
 		// RIGHT
-		if (GetAsyncKeyState(VK_RIGHT & 0x8000) || GetAsyncKeyState(VK_RIGHT) & 0x8001) {
+		else if (GetAsyncKeyState(VK_RIGHT & 0x8000) || GetAsyncKeyState(VK_RIGHT) & 0x8001) {
 			mbpX01 += 0.02;
 			mbpX02 += 0.02;
 		}
 		// UP
-		if (GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(VK_UP) & 0x8001) {
+		else if (GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(VK_UP) & 0x8001) {
 			mbpY01 += 0.02;
 			mbpY02 += 0.02;
 		}
 		// DOWN
-		if (GetAsyncKeyState(VK_DOWN) & 0x8000 || GetAsyncKeyState(VK_DOWN) & 0x8001) {
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000 || GetAsyncKeyState(VK_DOWN) & 0x8001) {
 			mbpY01 -= 0.02;
 			mbpY02 -= 0.02;
 		}
@@ -82,11 +84,11 @@ int main(void) {
 		glPointSize(10);
 		glBegin(GL_TRIANGLES);
 
-		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);		//RGB + Alpha
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);		//RGB + Alpha
 		glVertex2f(bpX01, bpY01);
-		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		glVertex2f(bpX01, bpY02);
-		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		glVertex2f(bpX02, bpY02);
 		glEnd();
 
@@ -94,11 +96,11 @@ int main(void) {
 		glPointSize(10);
 		glBegin(GL_TRIANGLES);
 
-		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);		
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);		
 		glVertex2f(bpX01, bpY01);
-		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		glVertex2f(bpX02, bpY01);
-		glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		glVertex2f(bpX02, bpY02);
 		glEnd();
 		
@@ -106,11 +108,11 @@ int main(void) {
 		glPointSize(5);
 		glBegin(GL_TRIANGLES);
 		
-		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);		
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);		
 		glVertex2f(mbpX02, mbpY02);
-		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		glVertex2f(mbpX01, mbpY02);
-		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		glVertex2f(mbpX01, mbpY01);
 		glEnd();
 
@@ -118,11 +120,11 @@ int main(void) {
 		glPointSize(5);
 		glBegin(GL_TRIANGLES);
 
-		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		glVertex2f(mbpX02, mbpY01);
-		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		glVertex2f(mbpX01, mbpY01);
-		glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		glVertex2f(mbpX02, mbpY02);
 		glEnd();
 
